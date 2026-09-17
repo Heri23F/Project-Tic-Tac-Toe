@@ -70,7 +70,7 @@ const gameControl = function (
   const playRound = function (row, column) {
     // guard rail for invalid add mark
     if (board.addMark(activePlayer().mark, row, column) === "invalid") {
-      return
+      return { status: "invalidMove" };
     }
 
     board.addMark(activePlayer().mark, row, column);
@@ -79,11 +79,12 @@ const gameControl = function (
       scoreBoard.addScore(turn);
       scoreBoard.addRound();
       scoreBoard.addRoundwiner(turn);
-      console.log(`${activePlayer().name} win`);
-      console.log(scoreBoard.getValue());
+      switchTurn()
+      return { status: "winGame" };
     }
 
     switchTurn();
+    return { status: "takeTurn" };
   };
 
   function gameWinner() {
@@ -136,18 +137,7 @@ const gameControl = function (
   };
 };
 
-let game = gameControl();
-
-// function simulateTurn() {
-//   game.playRound(0, 0);
-//   game.playRound(0, 2);
-//   game.playRound(1, 0);
-//   game.playRound(1, 1);
-//   game.playRound(2, 0);
-// }
-
-// simulateTurn();
-
+// Console Interface
 const consoleGame = (function () {
   const game = gameControl();
 
@@ -160,9 +150,25 @@ const consoleGame = (function () {
     console.log(`Now ${game.activePlayer().name} Turn`);
   };
   const takeTurn = (row, column) => {
-    game.playRound(row, column);
-    return updateDisplay()
+    const status = game.playRound(row, column).status;
+    if (status === "winGame") {
+      return console.log(`${game.getScore.roundWinner} win this round`);
+    }
+    if (status === "invalidMove") {
+      return console.log("this cell already taken");
+    }
+    if (status === "takeTurn") {
+      updateDisplay();
+    }
   };
   updateDisplay();
   return { takeTurn };
 })();
+
+// test game
+
+consoleGame.takeTurn(0, 0); // P1
+consoleGame.takeTurn(1, 0); // P2
+consoleGame.takeTurn(0, 1); // P1
+consoleGame.takeTurn(1, 1); // P2
+consoleGame.takeTurn(0, 2); // P1 — completes row 0, should trigger "winGame"
