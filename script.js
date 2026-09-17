@@ -20,8 +20,6 @@ const GameBoard = function () {
   };
 
   const getBoard = () => board;
-  const boardState = () =>
-    board.map((row) => row.map((cell) => cell.getValue()));
 
   function addMark(mark, row, column) {
     //guardrail for inputing cell that already taken
@@ -42,7 +40,7 @@ const GameBoard = function () {
     return ownList;
   };
 
-  return { getBoard, boardState, addMark, makeBoard, ownCell };
+  return { getBoard, addMark, makeBoard, ownCell };
 };
 
 const gameControl = function (
@@ -65,18 +63,9 @@ const gameControl = function (
   const switchTurn = () => (turn === 0 ? (turn = 1) : (turn = 0));
   const activePlayer = () => player[turn];
 
-  // used for console based not needed for ui
-  const displayTurn = (() => {
-    const takeTurn = () => {
-      console.log(activePlayer().name + " take turn");
-      console.log(board.boardState());
-    };
-    const newTurn = () => console.log(`Now ${activePlayer().name} Turn`);
-    const errorTurn = () =>
-      `Cell already taken still ${activePlayer().name} turn`;
-
-    return { takeTurn, newTurn, errorTurn };
-  })();
+  const printBoard = () => {
+    return board.getBoard().map((row) => row.map((cell) => cell.getValue()));
+  };
 
   const playRound = function (row, column) {
     // guard rail for invalid add mark
@@ -93,9 +82,8 @@ const gameControl = function (
       console.log(`${activePlayer().name} win`);
       console.log(scoreBoard.getValue());
     }
-    displayTurn.takeTurn();
+
     switchTurn();
-    displayTurn.newTurn();
   };
 
   function gameWinner() {
@@ -126,6 +114,7 @@ const gameControl = function (
       score: [0, 0],
       round: 1,
       roundWinner: undefined,
+      playerName: [player[0].name, player[1].name],
     };
 
     const getValue = () => {
@@ -139,7 +128,12 @@ const gameControl = function (
     return { getValue, addRound, addScore, addRoundwiner };
   })();
 
-  return { playRound, activePlayer, getScore: scoreBoard.getValue() };
+  return {
+    playRound,
+    activePlayer,
+    getScore: scoreBoard.getValue(),
+    printBoard,
+  };
 };
 
 let game = gameControl();
@@ -153,3 +147,14 @@ function simulateTurn() {
 }
 
 simulateTurn();
+
+const consoleGame = (function () {
+  const game = gameControl();
+
+  console.log(`Round: ${game.getScore.round}`);
+  console.log(`Score:`);
+  console.log(`${game.getScore.playerName[0]}: ${game.getScore.score[0]}\n`);
+  console.log(`${game.getScore.playerName[1]}: ${game.getScore.score[1]}\n`);
+  console.log(game.printBoard());
+  console.log(`Now ${game.activePlayer().name} Turn`);
+})();
