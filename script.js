@@ -72,7 +72,8 @@ const gameControl = function (
       console.log(board.boardState());
     };
     const newTurn = () => console.log(`Now ${activePlayer().name} Turn`);
-    const errorTurn = () => `Cell already taken still ${activePlayer().name} turn`;
+    const errorTurn = () =>
+      `Cell already taken still ${activePlayer().name} turn`;
 
     return { takeTurn, newTurn, errorTurn };
   })();
@@ -84,21 +85,21 @@ const gameControl = function (
     }
 
     board.addMark(activePlayer().mark, row, column);
-    if (gameWinner(getPlayerCell(turn))) {
-      return console.log(`${activePlayer().name} win`);
+    if (gameWinner()) {
+      board.makeBoard();
+      scoreBoard.addScore(turn);
+      scoreBoard.addRound();
+      scoreBoard.addRoundwiner(turn);
+      console.log(`${activePlayer().name} win`);
+      console.log(scoreBoard.getValue());
     }
     displayTurn.takeTurn();
     switchTurn();
     displayTurn.newTurn();
   };
 
-  const getPlayerCell = (turn) => {
-    let playerCell = board.ownCell(activePlayer().mark);
-
-    return playerCell;
-  };
-
-  function gameWinner(evalCell = []) {
+  function gameWinner() {
+    let evalCell = board.ownCell(activePlayer().mark);
     if (evalCell.length < 3) return;
 
     const pattern = [
@@ -120,17 +121,35 @@ const gameControl = function (
     );
   }
 
-  return { playRound, activePlayer };
+  const scoreBoard = (() => {
+    let scoreBoardObject = {
+      score: [0, 0],
+      round: 1,
+      roundWinner: undefined,
+    };
+
+    const getValue = () => {
+      return scoreBoardObject;
+    };
+    const addRound = () => scoreBoardObject.round++;
+    const addScore = (playerTurn) => scoreBoardObject.score[playerTurn]++;
+    const addRoundwiner = (playerTurn) =>
+      (scoreBoardObject.roundWinner = player[playerTurn].name);
+
+    return { getValue, addRound, addScore, addRoundwiner };
+  })();
+
+  return { playRound, activePlayer, getScore: scoreBoard.getValue() };
 };
 
 let game = gameControl();
 
-// function simulateTurn() {
-//   game.playRound(0, 0);
-//   game.playRound(0, 2);
-//   game.playRound(1, 0);
-//   game.playRound(1, 1);
-//   game.playRound(2, 0);
-// }
+function simulateTurn() {
+  game.playRound(0, 0);
+  game.playRound(0, 2);
+  game.playRound(1, 0);
+  game.playRound(1, 1);
+  game.playRound(2, 0);
+}
 
-// simulateTurn();
+simulateTurn();
