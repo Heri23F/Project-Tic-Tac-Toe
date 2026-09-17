@@ -79,13 +79,24 @@ const gameControl = function (
       scoreBoard.addScore(turn);
       scoreBoard.addRound();
       scoreBoard.addRoundwiner(turn);
-      switchTurn()
+      switchTurn();
       return { status: "winGame" };
     }
 
+    if (!gameWinner() && gameDraw()) {
+      board.makeBoard();
+      scoreBoard.addRound();
+      scoreBoard.drawRound();
+      return { status: "drawRound" };
+    }
     switchTurn();
     return { status: "takeTurn" };
   };
+
+  function gameDraw() {
+    let evalCell = board.ownCell(0);
+    return evalCell.length === 0;
+  }
 
   function gameWinner() {
     let evalCell = board.ownCell(activePlayer().mark);
@@ -125,8 +136,8 @@ const gameControl = function (
     const addScore = (playerTurn) => scoreBoardObject.score[playerTurn]++;
     const addRoundwiner = (playerTurn) =>
       (scoreBoardObject.roundWinner = player[playerTurn].name);
-
-    return { getValue, addRound, addScore, addRoundwiner };
+    const drawRound = () => (scoreBoardObject.roundWinner = undefined);
+    return { getValue, addRound, addScore, addRoundwiner, drawRound };
   })();
 
   return {
@@ -152,6 +163,7 @@ const consoleGame = (function () {
   const takeTurn = (row, column) => {
     const status = game.playRound(row, column).status;
     if (status === "winGame") {
+      console.log("==== Winner ====")
       return console.log(`${game.getScore.roundWinner} win this round`);
     }
     if (status === "invalidMove") {
@@ -160,6 +172,11 @@ const consoleGame = (function () {
     if (status === "takeTurn") {
       updateDisplay();
     }
+    if (status === "drawRound") {
+      console.log("Now One Win in this round");
+      console.log("====== Draw ======");
+      return updateDisplay();
+    }
   };
   updateDisplay();
   return { takeTurn };
@@ -167,8 +184,19 @@ const consoleGame = (function () {
 
 // test game
 
+// consoleGame.takeTurn(0, 0); // P1
+// consoleGame.takeTurn(1, 0); // P2
+// consoleGame.takeTurn(0, 1); // P1
+// consoleGame.takeTurn(1, 1); // P2
+// consoleGame.takeTurn(0, 2); // P1 — completes row 0, should trigger "winGame"
+
 consoleGame.takeTurn(0, 0); // P1
-consoleGame.takeTurn(1, 0); // P2
-consoleGame.takeTurn(0, 1); // P1
-consoleGame.takeTurn(1, 1); // P2
-consoleGame.takeTurn(0, 2); // P1 — completes row 0, should trigger "winGame"
+consoleGame.takeTurn(0, 1); // P2
+consoleGame.takeTurn(0, 2); // P1
+consoleGame.takeTurn(1, 2); // P2
+consoleGame.takeTurn(1, 0); // P1
+consoleGame.takeTurn(2, 0); // P2
+consoleGame.takeTurn(1, 1); // P1
+consoleGame.takeTurn(2, 2); // P2
+consoleGame.takeTurn(2, 1); // P1 — board now full, no winning line, should trigger "draw" once you add it
+
