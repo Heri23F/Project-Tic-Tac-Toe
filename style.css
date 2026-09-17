@@ -1,0 +1,20 @@
+.div-board {
+    width: 360px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 120px);
+
+    .cell {
+        border: none;
+        border-bottom: 1px solid black;
+        border-right: 1px solid black;
+        background-color: white;
+    }
+    .cell:nth-child(3n) {
+        border-right: none;
+    }
+    .cell:nth-child(n+7) {
+        border-bottom: none;
+    }
+    
+}

@@ -163,7 +163,7 @@ const consoleGame = (function () {
   const takeTurn = (row, column) => {
     const status = game.playRound(row, column).status;
     if (status === "winGame") {
-      console.log("==== Winner ====")
+      console.log("==== Winner ====");
       return console.log(`${game.getScore.roundWinner} win this round`);
     }
     if (status === "invalidMove") {
@@ -200,3 +200,27 @@ consoleGame.takeTurn(1, 1); // P1
 consoleGame.takeTurn(2, 2); // P2
 consoleGame.takeTurn(2, 1); // P1 — board now full, no winning line, should trigger "draw" once you add it
 
+const uiControl = function () {
+  const game = gameControl();
+  const uiMark = ["", "o", "x"];
+  const uiBoard = document.querySelector(".div-board");
+
+  const updateDisplay = () => {
+    uiBoard.textContent = "";
+    // create cell for div board
+    game.printBoard().forEach((row, rowIndex) => {
+      row.forEach((cell, columIndex) => {
+        let uiCell = document.createElement("button");
+        uiCell.classList = "cell";
+        uiCell.textContent = uiMark[cell];
+        uiCell.dataset.row = rowIndex;
+        uiCell.dataset.column = columIndex;
+        uiBoard.appendChild(uiCell);
+      });
+    });
+  };
+
+  updateDisplay()
+};
+
+uiControl();
