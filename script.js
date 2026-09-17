@@ -70,7 +70,7 @@ const gameControl = function (
   const playRound = function (row, column) {
     // guard rail for invalid add mark
     if (board.addMark(activePlayer().mark, row, column) === "invalid") {
-      return console.log(displayTurn.errorTurn());
+      return
     }
 
     board.addMark(activePlayer().mark, row, column);
@@ -138,23 +138,31 @@ const gameControl = function (
 
 let game = gameControl();
 
-function simulateTurn() {
-  game.playRound(0, 0);
-  game.playRound(0, 2);
-  game.playRound(1, 0);
-  game.playRound(1, 1);
-  game.playRound(2, 0);
-}
+// function simulateTurn() {
+//   game.playRound(0, 0);
+//   game.playRound(0, 2);
+//   game.playRound(1, 0);
+//   game.playRound(1, 1);
+//   game.playRound(2, 0);
+// }
 
-simulateTurn();
+// simulateTurn();
 
 const consoleGame = (function () {
   const game = gameControl();
 
-  console.log(`Round: ${game.getScore.round}`);
-  console.log(`Score:`);
-  console.log(`${game.getScore.playerName[0]}: ${game.getScore.score[0]}\n`);
-  console.log(`${game.getScore.playerName[1]}: ${game.getScore.score[1]}\n`);
-  console.log(game.printBoard());
-  console.log(`Now ${game.activePlayer().name} Turn`);
+  const updateDisplay = () => {
+    console.log(`Round: ${game.getScore.round}`);
+    console.log(`Score:`);
+    console.log(`${game.getScore.playerName[0]}: ${game.getScore.score[0]}\n`);
+    console.log(`${game.getScore.playerName[1]}: ${game.getScore.score[1]}\n`);
+    console.log(game.printBoard());
+    console.log(`Now ${game.activePlayer().name} Turn`);
+  };
+  const takeTurn = (row, column) => {
+    game.playRound(row, column);
+    return updateDisplay()
+  };
+  updateDisplay();
+  return { takeTurn };
 })();
