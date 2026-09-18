@@ -75,19 +75,22 @@ const gameControl = function (
 
     board.addMark(activePlayer().mark, row, column);
     if (gameWinner()) {
+      const finalBoard = printBoard()
       board.makeBoard();
       scoreBoard.addScore(turn);
       scoreBoard.addRound();
       scoreBoard.addRoundwiner(turn);
       switchTurn();
-      return { status: "winGame" };
+      return { status: "winGame", finalBoard: finalBoard };
     }
 
     if (!gameWinner() && gameDraw()) {
+      const finalBoard = printBoard()
       board.makeBoard();
       scoreBoard.addRound();
       scoreBoard.drawRound();
-      return { status: "drawRound" };
+      switchTurn()
+      return { status: "drawRound", finalBoard: finalBoard };
     }
     switchTurn();
     return { status: "takeTurn" };
@@ -152,33 +155,34 @@ const gameControl = function (
 const consoleGame = (function () {
   const game = gameControl();
 
-  const updateDisplay = () => {
+  const updateDisplay = (board) => {
     console.log(`Round: ${game.getScore.round}`);
     console.log(`Score:`);
     console.log(`${game.getScore.playerName[0]}: ${game.getScore.score[0]}\n`);
     console.log(`${game.getScore.playerName[1]}: ${game.getScore.score[1]}\n`);
-    console.log(game.printBoard());
+    console.log(board);
     console.log(`Now ${game.activePlayer().name} Turn`);
   };
   const takeTurn = (row, column) => {
-    const status = game.playRound(row, column).status;
-    if (status === "winGame") {
+    const turn = game.playRound(row, column);
+
+    if (turn.status === "winGame") {
       console.log("==== Winner ====");
       return console.log(`${game.getScore.roundWinner} win this round`);
     }
-    if (status === "invalidMove") {
+    if (turn.status === "invalidMove") {
       return console.log("this cell already taken");
     }
-    if (status === "takeTurn") {
-      updateDisplay();
+    if (turn.status === "takeTurn") {
+      updateDisplay(game.printBoard());
     }
-    if (status === "drawRound") {
+    if (turn.status === "drawRound") {
       console.log("Now One Win in this round");
       console.log("====== Draw ======");
-      return updateDisplay();
+      return updateDisplay(turn.finalBoard);
     }
   };
-  updateDisplay();
+  updateDisplay(game.printBoard());
   return { takeTurn };
 })();
 
@@ -190,28 +194,30 @@ const consoleGame = (function () {
 // consoleGame.takeTurn(1, 1); // P2
 // consoleGame.takeTurn(0, 2); // P1 — completes row 0, should trigger "winGame"
 
-consoleGame.takeTurn(0, 0); // P1
-consoleGame.takeTurn(0, 1); // P2
-consoleGame.takeTurn(0, 2); // P1
-consoleGame.takeTurn(1, 2); // P2
-consoleGame.takeTurn(1, 0); // P1
-consoleGame.takeTurn(2, 0); // P2
-consoleGame.takeTurn(1, 1); // P1
-consoleGame.takeTurn(2, 2); // P2
-consoleGame.takeTurn(2, 1); // P1 — board now full, no winning line, should trigger "draw" once you add it
+// consoleGame.takeTurn(0, 0); // P1
+// consoleGame.takeTurn(0, 1); // P2
+// consoleGame.takeTurn(0, 2); // P1
+// consoleGame.takeTurn(1, 2); // P2
+// consoleGame.takeTurn(1, 0); // P1
+// consoleGame.takeTurn(2, 0); // P2
+// consoleGame.takeTurn(1, 1); // P1
+// consoleGame.takeTurn(2, 2); // P2
+// consoleGame.takeTurn(2, 1); // P1 — board now full, no winning line, should trigger "draw" once you add it
 
 const uiControl = function () {
   const game = gameControl();
   const uiMark = ["", "o", "x"];
+  const cellClass = ["empty", "player-one", "player-two"];
   const uiBoard = document.querySelector(".div-board");
 
-  const updateDisplay = () => {
+  const updateDisplay = (board) => {
     uiBoard.textContent = "";
     // create cell for div board
-    game.printBoard().forEach((row, rowIndex) => {
+    board.forEach((row, rowIndex) => {
       row.forEach((cell, columIndex) => {
         let uiCell = document.createElement("button");
-        uiCell.classList = "cell";
+        // uiCell.classList = "cell";
+        uiCell.classList.add("cell", cellClass[cell]);
         uiCell.textContent = uiMark[cell];
         uiCell.dataset.row = rowIndex;
         uiCell.dataset.column = columIndex;
@@ -220,7 +226,27 @@ const uiControl = function () {
     });
   };
 
-  updateDisplay()
+  const clickHandler = (event) => {
+    const target = event.target;
+    let rowIndex = target.dataset.row;
+    let columnIndex = target.dataset.column;
+    if (!target.classList.contains("cell")) {
+      return;
+    }
+
+    const turn = game.playRound(rowIndex, columnIndex);
+    const turnResult = {
+      takeTurn: () => updateDisplay(game.printBoard()),
+      invalidMove: () => {return},
+      winGame: () => updateDisplay(turn.finalBoard),
+      drawRound: () => updateDisplay(turn.finalBoard)
+    }
+    
+    turnResult[turn.status]()
+  };
+
+  uiBoard.addEventListener("click", clickHandler);
+  updateDisplay(game.printBoard());
 };
 
 uiControl();
