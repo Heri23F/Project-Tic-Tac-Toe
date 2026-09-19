@@ -75,7 +75,7 @@ const gameControl = function (
 
     board.addMark(activePlayer().mark, row, column);
     if (gameWinner()) {
-      const finalBoard = printBoard()
+      const finalBoard = printBoard();
       board.makeBoard();
       scoreBoard.addScore(turn);
       scoreBoard.addRound();
@@ -85,11 +85,11 @@ const gameControl = function (
     }
 
     if (!gameWinner() && gameDraw()) {
-      const finalBoard = printBoard()
+      const finalBoard = printBoard();
       board.makeBoard();
       scoreBoard.addRound();
       scoreBoard.drawRound();
-      switchTurn()
+      switchTurn();
       return { status: "drawRound", finalBoard: finalBoard };
     }
     switchTurn();
@@ -209,6 +209,8 @@ const uiControl = function () {
   const uiMark = ["", "o", "x"];
   const cellClass = ["empty", "player-one", "player-two"];
   const uiBoard = document.querySelector(".div-board");
+  const uiScoreBoard = document.querySelector(".socreboard");
+  const endRoundDialog = document.querySelector(".round-dialog");
 
   const updateDisplay = (board) => {
     uiBoard.textContent = "";
@@ -226,6 +228,66 @@ const uiControl = function () {
     });
   };
 
+  const updateScore = () => {
+    uiScoreBoard.textContent = "";
+
+    const round = document.createElement("div");
+    round.classList.add("round-div");
+    const roundText = document.createElement("span");
+    roundText.classList.add("round-text");
+    roundText.textContent = `Round: ${game.getScore.round}`;
+    round.appendChild(roundText);
+    uiScoreBoard.appendChild(round);
+
+    const score = document.createElement("div");
+    score.classList.add("score-div");
+    const playerOneScore = document.createElement("span");
+    const playerTwoScore = document.createElement("span");
+    const scoreText = document.createElement("span");
+    playerOneScore.classList.add("score-text", "player-one");
+    playerTwoScore.classList.add("score-text", "player-two");
+    scoreText.classList.add("score-text");
+    playerOneScore.textContent = `${game.getScore.score[0]}`;
+    playerTwoScore.textContent = `${game.getScore.score[1]}`;
+    scoreText.textContent = "VS";
+    score.append(playerOneScore, scoreText, playerTwoScore);
+    uiScoreBoard.append(score);
+  };
+
+  const endRoundUpdate = () => {
+    endRoundDialog.textContent = "";
+    const endRoundText = document.createElement("span");
+    endRoundText.classList.add("round-text");
+
+    const addButton = () => {
+      const endRoundBtn = document.createElement("button");
+      endRoundBtn.classList.add("round-button");
+      endRoundBtn.textContent = "Continue";
+      endRoundDialog.append(endRoundBtn);
+    };
+
+    const winRound = () => {
+      endRoundText.textContent = `${game.getScore.roundWinner} Win`;
+      endRoundText.classList.add("win-round");
+      endRoundDialog.append(endRoundText);
+      addButton();
+      openDialog();
+      return;
+    };
+    const drawRound = () => {
+      endRoundText.textContent = `Draw`;
+      endRoundText.classList.add("draw-round");
+      endRoundDialog.append(endRoundText);
+      addButton();
+      openDialog();
+      return;
+    };
+
+    const openDialog = () => endRoundDialog.showModal();
+
+    return { winRound, drawRound };
+  };
+
   const clickHandler = (event) => {
     const target = event.target;
     let rowIndex = target.dataset.row;
@@ -237,16 +299,37 @@ const uiControl = function () {
     const turn = game.playRound(rowIndex, columnIndex);
     const turnResult = {
       takeTurn: () => updateDisplay(game.printBoard()),
-      invalidMove: () => {return},
-      winGame: () => updateDisplay(turn.finalBoard),
-      drawRound: () => updateDisplay(turn.finalBoard)
-    }
-    
-    turnResult[turn.status]()
+      invalidMove: () => {
+        return;
+      },
+      winGame: () => {
+        updateDisplay(turn.finalBoard);
+        updateScore();
+        endRoundUpdate().winRound();
+        return;
+      },
+      drawRound: () => {
+        updateDisplay(turn.finalBoard);
+        updateScore();
+        endRoundUpdate().drawRound();
+        return;
+      },
+    };
+
+    turnResult[turn.status]();
   };
 
   uiBoard.addEventListener("click", clickHandler);
+  endRoundDialog.addEventListener("click", (event) => {
+    const target = event.target;
+
+    if (!target.classList.contains("round-button")) return;
+
+    endRoundDialog.close();
+    updateDisplay(game.printBoard());
+  });
   updateDisplay(game.printBoard());
+  updateScore();
 };
 
 uiControl();
