@@ -434,7 +434,7 @@ const uiControl = function () {
 
     game = gameControl(playerOneInput, playerTwoInput);
     initDialog.close();
-
+    formInit.reset
     updateDisplay(game.printBoard())
     updateScore()
     return
