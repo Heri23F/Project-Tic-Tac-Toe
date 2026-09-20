@@ -243,12 +243,15 @@ const uiControl = function () {
     playerTurn.textContent = "";
 
     const playerTurnText = document.createElement("span");
-    playerTurnText.classList.add(
-      "player-turn-text",
-      cellClass[game.activePlayer().mark],
-    );
     playerTurnText.textContent = uiMark[game.activePlayer().mark];
-    playerTurn.append(playerTurnText);
+    playerTurnText.classList = "player-turn-text";
+
+    const playerName = document.createElement("span");
+    playerName.classList = "player-name";
+    playerName.textContent = game.activePlayer().name;
+
+    playerTurn.classList = `player-turn ${cellClass[game.activePlayer().mark]}`;
+    playerTurn.append(playerName, playerTurnText);
   };
 
   const updateScore = () => {
@@ -374,3 +377,52 @@ uiControl();
 
 // I chose to
 // Decide to not add change name and new game
+
+const initGame = () => {
+  const body = document.querySelector("body");
+
+  const initDialog = document.createElement("dialog");
+  initDialog.classList = "init-dialog";
+
+  const initDialogText = document.createElement("span");
+  initDialogText.classList = "init-dialog-text";
+  initDialogText.textContent = "Player Name";
+
+  const initForm = document.createElement("form");
+  initForm.classList = "init-form";
+
+  const playerOneNameLabel = document.createElement("label");
+  playerOneNameLabel.setAttribute("for", "player-one-name");
+  playerOneNameLabel.textContent = "Player One:";
+
+  const playerOneNameInput = document.createElement("input");
+  playerOneNameInput.setAttribute("id", "player-one-name");
+  playerOneNameInput.setAttribute("type", "text");
+
+  const playerTwoNameLabel = document.createElement("label");
+  playerTwoNameLabel.setAttribute("for", "player-two-name");
+  playerTwoNameLabel.textContent = "Player two:";
+
+  const playerTwoNameInput = document.createElement("input");
+  playerTwoNameInput.setAttribute("id", "player-two-name");
+  playerTwoNameInput.setAttribute("type", "text");
+
+  const initButton = document.createElement("button");
+  initButton.classList = "init-button";
+  initButton.setAttribute("type", "submit")
+  initButton.textContent = "Confirm";
+
+  initForm.append(
+    playerOneNameLabel,
+    playerOneNameInput,
+    playerTwoNameLabel,
+    playerTwoNameInput,
+    initButton,
+  );
+  initDialog.append(initDialogText, initForm);
+  body.append(initDialog);
+  initDialog.showModal();
+  return;
+};
+
+initGame();
