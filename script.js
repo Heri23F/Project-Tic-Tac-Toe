@@ -76,13 +76,17 @@ const gameControl = function (
     board.addMark(activePlayer().mark, row, column);
     if (gameWinner()) {
       const finalBoard = printBoard();
-      const finalTurn = activePlayer().mark
+      const finalTurn = activePlayer().mark;
       board.makeBoard();
       scoreBoard.addScore(turn);
       scoreBoard.addRound();
       scoreBoard.addRoundwiner(turn);
       switchTurn();
-      return { status: "winGame", finalBoard: finalBoard, finalTurn: finalTurn };
+      return {
+        status: "winGame",
+        finalBoard: finalBoard,
+        finalTurn: finalTurn,
+      };
     }
 
     if (!gameWinner() && gameDraw()) {
@@ -201,24 +205,6 @@ const consoleGame = (function () {
   return { takeTurn };
 })();
 
-// test game
-
-// consoleGame.takeTurn(0, 0); // P1
-// consoleGame.takeTurn(1, 0); // P2
-// consoleGame.takeTurn(0, 1); // P1
-// consoleGame.takeTurn(1, 1); // P2
-// consoleGame.takeTurn(0, 2); // P1 — completes row 0, should trigger "winGame"
-
-// consoleGame.takeTurn(0, 0); // P1
-// consoleGame.takeTurn(0, 1); // P2
-// consoleGame.takeTurn(0, 2); // P1
-// consoleGame.takeTurn(1, 2); // P2
-// consoleGame.takeTurn(1, 0); // P1
-// consoleGame.takeTurn(2, 0); // P2
-// consoleGame.takeTurn(1, 1); // P1
-// consoleGame.takeTurn(2, 2); // P2
-// consoleGame.takeTurn(2, 1); // P1 — board now full, no winning line, should trigger "draw" once you add it
-
 const uiControl = function () {
   const game = gameControl();
   const uiMark = ["", "o", "x"];
@@ -304,7 +290,7 @@ const uiControl = function () {
     };
 
     const winRound = (currentTurn) => {
-      const playerTurn = currentTurn
+      const playerTurn = currentTurn;
       endRoundText.textContent = `${game.getScore.roundWinner} Win`;
       endRoundDialog.classList = `win-round ${cellClass[playerTurn]}`;
       endRoundDialog.append(endRoundText);
@@ -314,7 +300,7 @@ const uiControl = function () {
     };
     const drawRound = () => {
       endRoundText.textContent = `Draw`;
-      endRoundDialog.classList = ("draw-round");
+      endRoundDialog.classList = "draw-round";
       endRoundDialog.append(endRoundText);
       addButton();
       openDialog();
@@ -385,3 +371,6 @@ const uiControl = function () {
 };
 
 uiControl();
+
+// I chose to
+// Decide to not add change name and new game
