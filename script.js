@@ -206,7 +206,7 @@ const consoleGame = (function () {
 })();
 
 const uiControl = function () {
-  const game = gameControl();
+  let game = gameControl();
   const uiMark = ["", "o", "x"];
   const cellClass = ["empty", "player-one", "player-two"];
   const uiBoard = document.querySelector(".div-board");
@@ -237,6 +237,55 @@ const uiControl = function () {
     });
 
     updatePlayerTurn();
+  };
+
+  const initGame = () => {
+    const body = document.querySelector("body");
+
+    const initDialog = document.createElement("dialog");
+    initDialog.classList = "init-dialog";
+
+    const initDialogText = document.createElement("span");
+    initDialogText.classList = "init-dialog-text";
+    initDialogText.textContent = "Player Name";
+
+    const initForm = document.createElement("form");
+    initForm.classList = "init-form";
+
+    const playerOneNameLabel = document.createElement("label");
+    playerOneNameLabel.setAttribute("for", "player-one-name");
+    playerOneNameLabel.textContent = "Player One:";
+
+    const playerOneNameInput = document.createElement("input");
+    playerOneNameInput.setAttribute("id", "player-one-name");
+    playerOneNameInput.setAttribute("type", "text");
+    playerOneNameInput.setAttribute("required", "")
+
+    const playerTwoNameLabel = document.createElement("label");
+    playerTwoNameLabel.setAttribute("for", "player-two-name");
+    playerTwoNameLabel.textContent = "Player two:";
+
+    const playerTwoNameInput = document.createElement("input");
+    playerTwoNameInput.setAttribute("id", "player-two-name");
+    playerTwoNameInput.setAttribute("type", "text");
+    playerTwoNameInput.setAttribute("required", "")
+
+    const initButton = document.createElement("button");
+    initButton.classList = "init-button";
+    initButton.setAttribute("type", "submit");
+    initButton.textContent = "Confirm";
+
+    initForm.append(
+      playerOneNameLabel,
+      playerOneNameInput,
+      playerTwoNameLabel,
+      playerTwoNameInput,
+      initButton,
+    );
+    initDialog.append(initDialogText, initForm);
+    body.append(initDialog);
+    initDialog.showModal();
+    return;
   };
 
   const updatePlayerTurn = () => {
@@ -371,58 +420,28 @@ const uiControl = function () {
   updateDisplay(game.printBoard());
   addResetButton();
   updateScore();
+  initGame();
+
+  const formInit = document.querySelector(".init-form");
+  const initDialog = document.querySelector(".init-dialog");
+  formInit.addEventListener("submit", (event) => {
+    const target = event.target;
+    event.preventDefault();
+
+    const playerOneInput = document.getElementById("player-one-name").value;
+    const playerTwoInput = document.getElementById("player-two-name").value;
+
+
+    game = gameControl(playerOneInput, playerTwoInput);
+    initDialog.close();
+
+    updateDisplay(game.printBoard())
+    updateScore()
+    return
+  });
 };
 
 uiControl();
 
 // I chose to
 // Decide to not add change name and new game
-
-const initGame = () => {
-  const body = document.querySelector("body");
-
-  const initDialog = document.createElement("dialog");
-  initDialog.classList = "init-dialog";
-
-  const initDialogText = document.createElement("span");
-  initDialogText.classList = "init-dialog-text";
-  initDialogText.textContent = "Player Name";
-
-  const initForm = document.createElement("form");
-  initForm.classList = "init-form";
-
-  const playerOneNameLabel = document.createElement("label");
-  playerOneNameLabel.setAttribute("for", "player-one-name");
-  playerOneNameLabel.textContent = "Player One:";
-
-  const playerOneNameInput = document.createElement("input");
-  playerOneNameInput.setAttribute("id", "player-one-name");
-  playerOneNameInput.setAttribute("type", "text");
-
-  const playerTwoNameLabel = document.createElement("label");
-  playerTwoNameLabel.setAttribute("for", "player-two-name");
-  playerTwoNameLabel.textContent = "Player two:";
-
-  const playerTwoNameInput = document.createElement("input");
-  playerTwoNameInput.setAttribute("id", "player-two-name");
-  playerTwoNameInput.setAttribute("type", "text");
-
-  const initButton = document.createElement("button");
-  initButton.classList = "init-button";
-  initButton.setAttribute("type", "submit")
-  initButton.textContent = "Confirm";
-
-  initForm.append(
-    playerOneNameLabel,
-    playerOneNameInput,
-    playerTwoNameLabel,
-    playerTwoNameInput,
-    initButton,
-  );
-  initDialog.append(initDialogText, initForm);
-  body.append(initDialog);
-  initDialog.showModal();
-  return;
-};
-
-initGame();
