@@ -140,14 +140,28 @@ const gameControl = function (
     const addRoundwiner = (playerTurn) =>
       (scoreBoardObject.roundWinner = player[playerTurn].name);
     const drawRound = () => (scoreBoardObject.roundWinner = undefined);
-    return { getValue, addRound, addScore, addRoundwiner, drawRound };
+    const reset = () => {
+      scoreBoardObject.round = 0;
+      scoreBoardObject.roundWinner = undefined;
+      scoreBoardObject.score = [0, 0];
+      turn = 0;
+      return;
+    };
+    return { getValue, addRound, addScore, addRoundwiner, drawRound, reset };
   })();
+
+  const resetGame = () => {
+    board.makeBoard();
+    scoreBoard.reset();
+    return;
+  };
 
   return {
     playRound,
     activePlayer,
     getScore: scoreBoard.getValue(),
     printBoard,
+    resetGame,
   };
 };
 
@@ -212,6 +226,14 @@ const uiControl = function () {
   const uiScoreBoard = document.querySelector(".scoreboard");
   const endRoundDialog = document.querySelector(".round-dialog");
   const playerTurn = document.querySelector(".player-turn");
+  const topContainer = document.querySelector(".top-container");
+
+  const addResetButton = () => {
+    const resetButton = document.createElement("button");
+    resetButton.classList.add("reset-button");
+    resetButton.textContent = "Reset Game";
+    topContainer.append(resetButton);
+  };
 
   const updateDisplay = (board) => {
     uiBoard.textContent = "";
@@ -334,6 +356,7 @@ const uiControl = function () {
   };
 
   uiBoard.addEventListener("click", clickHandler);
+
   endRoundDialog.addEventListener("click", (event) => {
     const target = event.target;
 
@@ -342,7 +365,20 @@ const uiControl = function () {
     endRoundDialog.close();
     updateDisplay(game.printBoard());
   });
+
+  topContainer.addEventListener("click", (event) => {
+    const target = event.target;
+
+    if (!target.classList.contains("reset-button")) return;
+
+    game.resetGame();
+    updateDisplay(game.printBoard());
+    updateScore();
+    return;
+  });
+
   updateDisplay(game.printBoard());
+  addResetButton();
   updateScore();
 };
 
