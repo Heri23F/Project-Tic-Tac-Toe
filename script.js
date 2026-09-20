@@ -76,12 +76,13 @@ const gameControl = function (
     board.addMark(activePlayer().mark, row, column);
     if (gameWinner()) {
       const finalBoard = printBoard();
+      const finalTurn = activePlayer().mark
       board.makeBoard();
       scoreBoard.addScore(turn);
       scoreBoard.addRound();
       scoreBoard.addRoundwiner(turn);
       switchTurn();
-      return { status: "winGame", finalBoard: finalBoard };
+      return { status: "winGame", finalBoard: finalBoard, finalTurn: finalTurn };
     }
 
     if (!gameWinner() && gameDraw()) {
@@ -302,9 +303,10 @@ const uiControl = function () {
       endRoundDialog.append(endRoundBtn);
     };
 
-    const winRound = () => {
+    const winRound = (currentTurn) => {
+      const playerTurn = currentTurn
       endRoundText.textContent = `${game.getScore.roundWinner} Win`;
-      endRoundText.classList.add("win-round");
+      endRoundDialog.classList = `win-round ${cellClass[playerTurn]}`;
       endRoundDialog.append(endRoundText);
       addButton();
       openDialog();
@@ -312,7 +314,7 @@ const uiControl = function () {
     };
     const drawRound = () => {
       endRoundText.textContent = `Draw`;
-      endRoundText.classList.add("draw-round");
+      endRoundDialog.classList = ("draw-round");
       endRoundDialog.append(endRoundText);
       addButton();
       openDialog();
@@ -341,7 +343,7 @@ const uiControl = function () {
       winGame: () => {
         updateDisplay(turn.finalBoard);
         updateScore();
-        endRoundUpdate().winRound();
+        endRoundUpdate().winRound(turn.finalTurn);
         return;
       },
       drawRound: () => {
