@@ -209,8 +209,9 @@ const uiControl = function () {
   const uiMark = ["", "o", "x"];
   const cellClass = ["empty", "player-one", "player-two"];
   const uiBoard = document.querySelector(".div-board");
-  const uiScoreBoard = document.querySelector(".socreboard");
+  const uiScoreBoard = document.querySelector(".scoreboard");
   const endRoundDialog = document.querySelector(".round-dialog");
+  const playerTurn = document.querySelector(".player-turn");
 
   const updateDisplay = (board) => {
     uiBoard.textContent = "";
@@ -218,7 +219,6 @@ const uiControl = function () {
     board.forEach((row, rowIndex) => {
       row.forEach((cell, columIndex) => {
         let uiCell = document.createElement("button");
-        // uiCell.classList = "cell";
         uiCell.classList.add("cell", cellClass[cell]);
         uiCell.textContent = uiMark[cell];
         uiCell.dataset.row = rowIndex;
@@ -226,6 +226,20 @@ const uiControl = function () {
         uiBoard.appendChild(uiCell);
       });
     });
+
+    updatePlayerTurn();
+  };
+
+  const updatePlayerTurn = () => {
+    playerTurn.textContent = "";
+
+    const playerTurnText = document.createElement("span");
+    playerTurnText.classList.add(
+      "player-turn-text",
+      cellClass[game.activePlayer().mark],
+    );
+    playerTurnText.textContent = uiMark[game.activePlayer().mark];
+    playerTurn.append(playerTurnText);
   };
 
   const updateScore = () => {

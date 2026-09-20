@@ -1,34 +1,70 @@
 :root {
-    --player-two: #E13E3E;
-    --player-one: #0081EC;
+  --player-two: #e13e3e;
+  --player-one: #0081ec;
 }
 
 .player-one {
-    color: var(--player-one);
+  color: var(--player-one);
 }
 
 .player-two {
-    color: var(--player-two)
+  color: var(--player-two);
 }
 .div-board {
-    width: 360px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 120px);
+  width: 400px;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
 
-    .cell {
-        border: none;
-        border-bottom: 1px solid black;
-        border-right: 1px solid black;
-        background-color: white;
+  .cell {
+    border: none;
+    border-bottom: 2px solid black;
+    border-right: 2px solid black;
+    background-color: white;
+    font-size: 6em;
+    font-weight: 700;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .cell:nth-child(3n) {
+    border-right: none;
+  }
+  .cell:nth-child(n + 7) {
+    border-bottom: none;
+  }
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .top-container {
+    align-self: flex-start;
+    .scoreboard {
+      align-self: flex-start;
+      border: 2px solid black;
+      font-size: 2em;
+      padding: 0 24px;
+
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      .score-div {
+        display: flex;
+        justify-content: space-evenly;
+        align-self: stretch;
+      }
+    }
+    .player-turn {
+      align-self: flex-start;
+      border: 2px solid black;
+      display: flex;
+      justify-content: center;
+      .player-turn-text {
         font-size: 6em;
         font-weight: 700;
+        font-family: Arial, Helvetica, sans-serif;
+      }
     }
-    .cell:nth-child(3n) {
-        border-right: none;
-    }
-    .cell:nth-child(n+7) {
-        border-bottom: none;
-    }
-    
+  }
 }
