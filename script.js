@@ -214,12 +214,21 @@ const uiControl = function () {
   const endRoundDialog = document.querySelector(".round-dialog");
   const playerTurn = document.querySelector(".player-turn");
   const topContainer = document.querySelector(".top-container");
+  const gameButton = document.querySelector(".game-button")
 
   const addResetButton = () => {
+
     const resetButton = document.createElement("button");
-    resetButton.classList.add("reset-button");
+    resetButton.classList = ("reset-button");
     resetButton.textContent = "Reset Game";
-    topContainer.append(resetButton);
+
+    const newGameButton = document.createElement("button");
+    newGameButton.classList = "new-game-button";
+    newGameButton.textContent = "New Game";
+
+    gameButton.append(resetButton, newGameButton)
+
+    topContainer.append(gameButton);
   };
 
   const updateDisplay = (board) => {
@@ -433,15 +442,23 @@ const uiControl = function () {
 
 
     game = gameControl(playerOneInput, playerTwoInput);
+    formInit.reset()
     initDialog.close();
     formInit.reset
     updateDisplay(game.printBoard())
     updateScore()
     return
   });
+
+  gameButton.addEventListener("click", (event) => {
+    const target = event.target
+
+    if (!target.classList.contains("new-game-button")) return;
+
+    initDialog.showModal()
+  })
 };
 
-uiControl();
 
-// I chose to
-// Decide to not add change name and new game
+
+uiControl();

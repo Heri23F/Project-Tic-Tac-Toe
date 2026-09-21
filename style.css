@@ -22,10 +22,11 @@
 }
 
 .bottom-container {
-  grid-row: 2 / 3;
+  grid-row: 1 / 3;
   grid-column: 2 / 4;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 .div-board {
   width: 400px;
@@ -55,7 +56,9 @@ body {
   display: grid;
   grid-template-columns: auto 2fr 2fr 1fr;
   grid-template-rows: auto 1fr;
-  padding: 16px;
+  padding: 0;
+  margin: 0;
+  height: 100dvh;
   font-family: "Inter", sans-serif;
 }
 
@@ -96,14 +99,18 @@ dialog:open {
 }
 
 .top-container {
-  grid-row: 1;
+  grid-row: 1 / 3;
   grid-column: 1 / 2;
   display: flex;
   flex-direction: column;
-  border: 2px solid black;
-
+  justify-content: space-between;
+  border-right: 1px solid black;
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
   .scoreboard {
-    border-bottom: 2px solid black;
     font-size: 1.8em;
     padding: 0 24px;
 
@@ -124,13 +131,15 @@ dialog:open {
     }
   }
   .player-turn {
-    border-bottom: 2px solid black;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    .player-name {
+      font-size: 2em;
+    }
     .player-turn-text {
-      font-size: 5em;
+      font-size: 6em;
       font-weight: 700;
       font-family: Arial, Helvetica, sans-serif;
     }
@@ -190,4 +199,45 @@ dialog:open {
       width: 80px;
     }
   }
+}
+
+.new-game-button {
+  width: 100%;
+  border: none;
+  background-color: #4a7c59;
+  color: #ffffff;
+  cursor: pointer;
+  outline: none;
+
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.new-game-button:hover {
+  background-color: #589269;
+}
+
+.new-game-button:active {
+  background-color: #3b6347;
+
+  box-shadow:
+    inset 0 4px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.game-button {
+  display: flex;
+  flex-direction: column;
+}
+
+.current-turn {
+  background: black;
+  color: white;
+  text-align: center;
+}
+
+.new-game-button,
+.reset-button {
+  height: 24px;
 }
