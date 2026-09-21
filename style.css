@@ -27,7 +27,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-
 }
 .div-board {
   width: 400px;
@@ -136,8 +135,11 @@ dialog:open {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    .player-name {
+      font-size: 2em;
+    }
     .player-turn-text {
-      font-size: 5em;
+      font-size: 6em;
       font-weight: 700;
       font-family: Arial, Helvetica, sans-serif;
     }
@@ -233,4 +235,9 @@ dialog:open {
   background: black;
   color: white;
   text-align: center;
+}
+
+.new-game-button,
+.reset-button {
+  height: 24px;
 }
